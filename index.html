@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ჩანაწერთა წიგნი — ფინანსური ჟურნალი</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Georgian:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#171b21;
+    --ink-2:#20262f;
+    --paper:#efe8d6;
+    --paper-dim:#c9c0a6;
+    --brass:#c9a227;
+    --brass-dim:#8a7220;
+    --brass-glow:#e4c356;
+    --teal:#3e8e7e;
+    --teal-dim:#2b6357;
+    --rust:#b2543c;
+    --rust-dim:#7d3a29;
+    --line: rgba(239,232,214,0.14);
+    --line-strong: rgba(239,232,214,0.26);
+    --shadow: 0 18px 40px rgba(0,0,0,0.35);
+    --radius: 10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(201,162,39,0.08), transparent 60%),
+      var(--ink);
+    color:var(--paper);
+    font-family:'Noto Sans Georgian', sans-serif;
+    min-height:100vh;
+    padding:0 0 80px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:48px 28px 0;}
+  header.top{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:1px solid var(--line-strong);
+    padding-bottom:24px;margin-bottom:36px;
+    flex-wrap:wrap;gap:20px;
+  }
+  .brand-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--brass);opacity:0.85;margin:0 0 8px;
+  }
+  h1.brand-title{
+    font-family:'Noto Serif Georgian', serif;
+    font-weight:600;font-size:34px;margin:0;color:var(--paper);
+    letter-spacing:0.01em;
+  }
+  .today{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;color:var(--paper-dim);text-align:right;
+  }
+
+  .stamp-row{
+    display:grid;grid-template-columns:220px 1fr 1fr 1fr;gap:18px;
+    margin-bottom:40px;
+  }
+  @media (max-width: 900px){ .stamp-row{grid-template-columns:1fr 1fr; } }
+
+  .seal{
+    position:relative;
+    border-radius:50%;
+    aspect-ratio:1/1;
+    width:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border:2px solid var(--brass);
+    background: radial-gradient(circle at 50% 40%, rgba(201,162,39,0.14), rgba(201,162,39,0.02));
+    text-align:center;
+    padding:10px;
+  }
+  .seal::before{
+    content:"";position:absolute;inset:8px;border:1px dashed var(--brass-dim);border-radius:50%;
+  }
+  .seal .seal-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--brass-glow);margin-bottom:6px;
+  }
+  .seal .seal-value{
+    font-family:'Noto Serif Georgian', serif;
+    font-size:22px;font-weight:700;color:var(--paper);
+    line-height:1.15;
+  }
+  .seal .seal-value.neg{color:var(--rust);}
+  .seal .seal-value.pos{color:var(--teal);}
+
+  .metric{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    display:flex;flex-direction:column;justify-content:center;
+    gap:6px;
+  }
+  .metric .m-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--paper-dim);
+  }
+  .metric .m-value{
+    font-family:'JetBrains Mono', monospace;
+    font-size:26px;font-weight:500;
+  }
+  .metric.income .m-value{color:var(--teal);}
+  .metric.expense .m-value{color:var(--rust);}
+  .metric.count .m-value{color:var(--paper);}
+
+  .grid{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start;}
+  @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:24px;
+  }
+  .panel h2{
+    font-family:'Noto Serif Georgian', serif;
+    font-size:18px;font-weight:600;margin:0 0 18px;
+    color:var(--paper);
+    border-bottom:1px solid var(--line);
+    padding-bottom:12px;
+  }
+
+  label{display:block;font-size:12px;color:var(--paper-dim);margin:14px 0 6px;font-family:'JetBrains Mono', monospace;letter-spacing:0.04em;}
+  label:first-of-type{margin-top:0;}
+  input, select, textarea{
+    width:100%;
+    background:rgba(239,232,214,0.04);
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    color:var(--paper);
+    padding:10px 12px;
+    font-family:'Noto Sans Georgian', sans-serif;
+    font-size:14.5px;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none;border-color:var(--brass);
+    box-shadow:0 0 0 3px rgba(201,162,39,0.15);
+  }
+  textarea{resize:vertical;min-height:64px;}
+  select{cursor:pointer;}
+
+  .type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0;}
+  .type-btn{
+    border:1px solid var(--line-strong);
+    background:rgba(239,232,214,0.03);
+    color:var(--paper-dim);
+    padding:10px 8px;border-radius:6px;
+    font-family:'Noto Sans Georgian', sans-serif;font-size:13px;
+    cursor:pointer;text-align:center;transition:all .12s ease;
+  }
+  .type-btn.active[data-type="income"]{background:rgba(62,142,126,0.18);border-color:var(--teal);color:#bfe6da;}
+  .type-btn.active[data-type="expense"]{background:rgba(178,84,60,0.18);border-color:var(--rust);color:#f0c6b8;}
+  .type-btn.active[data-type="payment"]{background:rgba(201,162,39,0.18);border-color:var(--brass);color:#f2dd9c;}
+  .type-btn.active[data-type="transfer"]{background:rgba(139,150,168,0.18);border-color:#8b96a8;color:#d7dce4;}
+
+  button.submit{
+    margin-top:20px;width:100%;
+    background:var(--brass);
+    color:#241c05;
+    border:none;border-radius:6px;
+    padding:12px;font-size:14.5px;font-weight:600;
+    font-family:'Noto Sans Georgian', sans-serif;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  button.submit:hover{background:var(--brass-glow);}
+  button.submit:active{transform:scale(0.99);}
+
+  .ledger-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
+  .ledger-head h2{border:none;padding:0;margin:0;}
+  .filter-row{display:flex;gap:8px;}
+  .filter-row select{width:auto;padding:7px 10px;font-size:13px;}
+
+  .entries{display:flex;flex-direction:column;gap:0;}
+  .entry{
+    display:grid;
+    grid-template-columns:10px 1fr auto;
+    gap:14px;
+    align-items:start;
+    padding:16px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  .entry:last-child{border-bottom:none;}
+  .entry .dot{width:8px;height:8px;border-radius:50%;margin-top:7px;}
+  .entry.income .dot{background:var(--teal);}
+  .entry.expense .dot{background:var(--rust);}
+  .entry.payment .dot{background:var(--brass);}
+  .entry.transfer .dot{background:#8b96a8;}
+  .entry .body .top-line{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;}
+  .entry .type-tag{
+    font-family:'JetBrains Mono', monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;
+    padding:2px 7px;border-radius:4px;
+  }
+  .entry.income .type-tag{background:rgba(62,142,126,0.16);color:#8fd3c0;}
+  .entry.expense .type-tag{background:rgba(178,84,60,0.16);color:#e3a48e;}
+  .entry.payment .type-tag{background:rgba(201,162,39,0.16);color:#e4c356;}
+  .entry.transfer .type-tag{background:rgba(139,150,168,0.16);color:#c2c9d4;}
+  .entry .date{font-family:'JetBrains Mono', monospace;font-size:11.5px;color:var(--paper-dim);}
+  .entry .desc{margin:6px 0 0;font-size:14.5px;color:var(--paper);line-height:1.5;}
+  .entry .amount{
+    font-family:'JetBrains Mono', monospace;font-size:16px;font-weight:500;white-space:nowrap;
+  }
+  .entry.income .amount{color:var(--teal);}
+  .entry.expense .amount{color:var(--rust);}
+  .entry.payment .amount, .entry.transfer .amount{color:var(--paper);}
+  .entry .del{
+    background:none;border:none;color:var(--paper-dim);cursor:pointer;
+    font-size:12px;padding:2px 4px;opacity:0.5;font-family:'JetBrains Mono', monospace;
+  }
+  .entry .del:hover{opacity:1;color:var(--rust);}
+  .entry-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+
+  .empty{
+    text-align:center;padding:60px 20px;color:var(--paper-dim);
+  }
+  .empty .big{font-family:'Noto Serif Georgian', serif;font-size:19px;color:var(--paper);margin-bottom:8px;}
+
+  .loading-line{font-family:'JetBrains Mono', monospace;font-size:12px;color:var(--paper-dim);padding:20px;text-align:center;}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px;}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <p class="brand-eyebrow">კომპანიის ფინანსური აღრიცხვა</p>
+      <h1 class="brand-title">ჩანაწერთა წიგნი</h1>
+    </div>
+    <div class="today" id="todayDate"></div>
+  </header>
+  <div id="syncStatus" style="font-family:'JetBrains Mono', monospace;font-size:11px;color:var(--paper-dim);margin:-24px 0 24px;text-align:right;"></div>
+
+  <div class="stamp-row">
+    <div class="seal">
+      <div class="seal-label">ბალანსი</div>
+      <div class="seal-value" id="sealBalance">₾0</div>
+    </div>
+    <div class="metric income">
+      <div class="m-label">შემოსავალი</div>
+      <div class="m-value" id="totalIncome">₾0</div>
+    </div>
+    <div class="metric expense">
+      <div class="m-label">ხარჯი / გადახდა</div>
+      <div class="m-value" id="totalExpense">₾0</div>
+    </div>
+    <div class="metric count">
+      <div class="m-label">ჩანაწერები</div>
+      <div class="m-value" id="totalCount">0</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>ახალი ჩანაწერი</h2>
+      <form id="entryForm">
+        <label>ტიპი</label>
+        <div class="type-toggle" id="typeToggle">
+          <button type="button" class="type-btn active" data-type="income">შემოსავალი</button>
+          <button type="button" class="type-btn" data-type="expense">ხარჯი</button>
+          <button type="button" class="type-btn" data-type="payment">გადახდა</button>
+          <button type="button" class="type-btn" data-type="transfer">გადარიცხვა</button>
+        </div>
+
+        <label for="amount">თანხა (₾)</label>
+        <input type="number" id="amount" step="0.01" min="0" placeholder="0.00" required>
+
+        <label for="date">თარიღი</label>
+        <input type="date" id="date" required>
+
+        <label for="desc">აღწერა — სად დაიხარჯა ან რისთვის გადაირიცხა</label>
+        <textarea id="desc" placeholder="მაგ: ოფისის ქირა ივლისისთვის, მომწოდებელთან ანგარიშსწორება..." required></textarea>
+
+        <button type="submit" class="submit">ჩანაწერის დამატება</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="ledger-head">
+        <h2>ჩანაწერების ისტორია</h2>
+        <div class="filter-row">
+          <select id="filterType">
+            <option value="all">ყველა ტიპი</option>
+            <option value="income">შემოსავალი</option>
+            <option value="expense">ხარჯი</option>
+            <option value="payment">გადახდა</option>
+            <option value="transfer">გადარიცხვა</option>
+          </select>
+        </div>
+      </div>
+      <div class="entries" id="entriesList">
+        <div class="loading-line">იტვირთება...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let entries = [];
+let currentType = 'income';
+const typeLabels = {income:'შემოსავალი', expense:'ხარჯი', payment:'გადახდა', transfer:'გადარიცხვა'};
+
+const todayDateEl = document.getElementById('todayDate');
+const months = ['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+function formatDisplayDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  if(isNaN(d)) return iso;
+  return d.getDate() + ' ' + months[d.getMonth()] + ', ' + d.getFullYear();
+}
+(function(){
+  const now = new Date();
+  todayDateEl.textContent = formatDisplayDate(now.toISOString().slice(0,10));
+})();
+
+document.getElementById('date').value = new Date().toISOString().slice(0,10);
+
+document.querySelectorAll('.type-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentType = btn.dataset.type;
+  });
+});
+
+function fmtMoney(n){
+  const rounded = Math.round(n * 100) / 100;
+  return '₾' + rounded.toLocaleString('ka-GE', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+// ==== FIREBASE-ის კონფიგურაცია ====
+const firebaseConfig = {
+  apiKey: "AIzaSyDBQAWqCmO5srd1iZ71ph5rZNQGpYkbWwo",
+  authDomain: "finance-6430b.firebaseapp.com",
+  projectId: "finance-6430b",
+  storageBucket: "finance-6430b.firebasestorage.app",
+  messagingSenderId: "848610649724",
+  appId: "1:848610649724:web:7ea2d881429d49a33c8bf9",
+  measurementId: "G-P5RG1XGT5X"
+};
+
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
+const db = firebase.firestore();
+const entriesRef = db.collection('ledger-entries');
+const syncStatusEl = document.getElementById('syncStatus');
+
+function loadEntries(){
+  syncStatusEl.textContent = 'სინქრონიზაცია...';
+  entriesRef.onSnapshot((snapshot)=>{
+    entries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    syncStatusEl.textContent = 'დასინქრონებულია — ყველასთვის საერთო';
+    render();
+  }, (err)=>{
+    console.error('Firebase შეცდომა', err);
+    syncStatusEl.textContent = 'დაკავშირების შეცდომა — შეამოწმეთ firebaseConfig';
+  });
+}
+
+async function addEntryToDb(entry){
+  try{
+    await entriesRef.doc(entry.id).set(entry);
+  }catch(e){
+    console.error('შენახვის შეცდომა', e);
+    alert('ჩანაწერის შენახვა ვერ მოხერხდა — შეამოწმეთ ინტერნეტ კავშირი და firebaseConfig');
+  }
+}
+
+async function deleteEntryFromDb(id){
+  try{
+    await entriesRef.doc(id).delete();
+  }catch(e){
+    console.error('წაშლის შეცდომა', e);
+  }
+}
+
+function render(){
+  const filter = document.getElementById('filterType').value;
+  const listEl = document.getElementById('entriesList');
+
+  let income = 0, expense = 0;
+  entries.forEach(e=>{
+    if(e.type === 'income') income += e.amount;
+    else expense += e.amount;
+  });
+  const balance = income - expense;
+
+  document.getElementById('totalIncome').textContent = fmtMoney(income);
+  document.getElementById('totalExpense').textContent = fmtMoney(expense);
+  document.getElementById('totalCount').textContent = entries.length;
+  const sealEl = document.getElementById('sealBalance');
+  sealEl.textContent = fmtMoney(balance);
+  sealEl.className = 'seal-value ' + (balance > 0 ? 'pos' : (balance < 0 ? 'neg' : ''));
+
+  const sorted = [...entries].sort((a,b)=> (b.date+b.createdAt).localeCompare(a.date+a.createdAt));
+  const filtered = filter === 'all' ? sorted : sorted.filter(e=>e.type===filter);
+
+  if(filtered.length === 0){
+    listEl.innerHTML = '<div class="empty"><div class="big">ჩანაწერები ჯერ არ არის</div><div>დაამატეთ პირველი ჩანაწერი მარცხენა ფორმიდან.</div></div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(e=>{
+    const sign = e.type === 'income' ? '+' : '−';
+    return `<div class="entry ${e.type}">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="top-line">
+          <span class="type-tag">${typeLabels[e.type]}</span>
+          <span class="date">${formatDisplayDate(e.date)}</span>
+        </div>
+        <p class="desc">${escapeHtml(e.desc)}</p>
+      </div>
+      <div class="entry-right">
+        <span class="amount">${sign} ${fmtMoney(e.amount)}</span>
+        <button class="del" data-id="${e.id}">წაშლა</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      deleteEntryFromDb(btn.dataset.id);
+    });
+  });
+}
+
+document.getElementById('filterType').addEventListener('change', render);
+
+document.getElementById('entryForm').addEventListener('submit', (ev)=>{
+  ev.preventDefault();
+  const amount = parseFloat(document.getElementById('amount').value);
+  const date = document.getElementById('date').value;
+  const desc = document.getElementById('desc').value.trim();
+  if(!amount || amount <= 0 || !date || !desc) return;
+
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+    type: currentType,
+    amount: amount,
+    date: date,
+    desc: desc,
+    createdAt: new Date().toISOString()
+  };
+  addEntryToDb(entry);
+
+  document.getElementById('amount').value = '';
+  document.getElementById('desc').value = '';
+  document.getElementById('date').value = new Date().toISOString().slice(0,10);
+
+  render();
+});
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+loadEntries();
+</script>
+</body>
+</html>
